@@ -1,274 +1,285 @@
 # MCP Multi Context Protocol — Oil & Gas Prototype
 
-Proyek ini adalah skeleton aplikasi **Multi Context Protocol (MCP)** untuk industri migas. Aplikasi ini dirancang untuk menghubungkan berbagai domain (drilling, production, HSSE, purchase order, timeseries, RAG search) ke dalam satu router protokol, sehingga query dari client bisa diarahkan ke service atau repository yang sesuai.
+Proyek ini adalah skeleton aplikasi **Multi Context Protocol (MCP)** untuk industri migas. Aplikasi ini menghubungkan berbagai domain (drilling, production, HSSE, purchase order, timeseries, dan RAG search) ke dalam satu router, sehingga query dari client bisa diarahkan otomatis ke service/repository yang tepat.
+
+```
+==============================================================================
+Project : MCP_RAG (Oil & Gas) — Go
+Version : 0.1.0
+Author  : Kukuh Tripamungkas Wicaksono (Kukuh TW)
+Email   : kukuhtw@gmail.com
+WhatsApp: https://wa.me/628129893706
+LinkedIn: https://id.linkedin.com/in/kukuhtw
+License : MIT (see LICENSE)
+
+Summary : Monorepo PoC MCP + RAG untuk studi kasus perusahaan migas.
+          Fitur utama:
+          - MCP Router & Tools (PO, Production, Drilling, Timeseries, NPT).
+          - RAG hybrid (BM25 + cosine) via /rag/search_v2 (MySQL doc_chunks).
+          - Jawaban berbasis dokumen (answer_with_docs) lengkap sitasi.
+          - Chat SSE (/chat/stream): planning → normalize → execute → stream.
+          - Plan normalizer (auto switch rag_search_v2, top-N PO by amount).
+          - Domain REST endpoints siap pakai.
+          - Konfigurasi via ENV; dukung OpenAI untuk LLM/embeddings (opsional).
+==============================================================================
+```
 
 ---
 
-## Struktur Utama
+## Isi Singkat
 
-* `cmd/api` → service HTTP (healthz, metrics, SSE chat, login, admin, dsb).
-* `cmd/mcp-router` → router intent MCP yang membaca `api/mcp-tools.json` dan `schemas/mcp/*`.
-* `cmd/worker` → worker untuk job async / batch.
-* `api/openapi.yaml` → definisi OpenAPI endpoint publik.
-* `api/mcp-tools.json` → manifest daftar MCP tool yang tersedia.
-* `internal/handlers/mcp` → implementasi tool MCP (drilling events, production, PO status, timeseries, dsb).
-* `internal/repositories/mysql` → akses data MySQL untuk domain migas.
-* `schemas/mcp/*.schema.json` → skema JSON untuk validasi input/output MCP.
-* `web/` → frontend React + Vite + Tailwind untuk dashboard & chat SSE.
+* [Struktur Proyek](#struktur-proyek)
+* [Fitur Utama](#fitur-utama)
+* [Quickstart](#quickstart)
+* [Konfigurasi Lingkungan](#konfigurasi-lingkungan)
+* [Endpoint Penting](#endpoint-penting)
+* [Arsitektur & Alur Chat SSE](#arsitektur--alur-chat-sse)
+* [Normalisasi Rencana (Planner)](#normalisasi-rencana-planner)
+* [Contoh Pertanyaan](#contoh-pertanyaan)
+* [Troubleshooting](#troubleshooting)
+* [Lisensi](#lisensi)
+* [Kredit](#kredit)
+
+---
+
+## Struktur Proyek
+
+```
+.
+├── api/
+│   ├── mcp-tools.json
+│   └── openapi.yaml
+├── cmd/
+│   ├── api/         # service HTTP utama
+│   ├── mcp-router/  # router MCP (opsional)
+│   └── worker/      # worker async/batch
+├── internal/
+│   ├── app/         # wiring app.go + routes.go
+│   ├── handlers/
+│   │   ├── http/    # healthz, login, metrics, chat SSE
+│   │   └── mcp/     # implementasi MCP tools
+│   ├── mcp/         # registry, router, plan normalizer
+│   ├── repositories/#
+│   │   ├── mysql/   # akses data domain (PO, drilling, dll)
+│   │   └── search/  # RAG repo
+│   └── ...          # config, middleware, services, util
+├── schemas/         # JSON Schema untuk planner/validasi
+├── db/              # migration & seed MySQL
+└── web/             # FE (React + Vite + Tailwind)
+```
+
+---
+
+## Fitur Utama
+
+* **MCP Router & Tools**: `get_production`, `get_timeseries`, `get_drilling_events`, `get_po_status`, `get_po_vendor_compare`, `get_po_vendor_summary`, `summarize_npt_events`, `answer_with_docs`, `get_po_top_amount` (Top-N by amount).
+* **RAG Hybrid**: Endpoint `/rag/search_v2` memakai MySQL (BM25 + cosine) langsung pada `doc_chunks.embedding (JSON)`.
+* **Answer With Docs**: Jawaban mengutip dokumen dengan sitasi (`DOC-XXXX#pY`).
+* **Chat SSE**: Endpoint `/chat/stream` → plan (LLM) → **NormalizePlan** → eksekusi routes (MCP/RAG) → stream jawaban.
+* **Plan Normalizer**:
+
+  * Rewrites route **rag** → tool `rag_search_v2` (payload `{query, top_k, alpha}`).
+  * Fallback dari `detect_anomalies` ke RAG jika payload salah tapi pertanyaan bernuansa dokumen.
+  * Perbaikan otomatis kasus **Top-N PO by amount** → pakai `get_po_top_amount`.
+* **Observability**: `/metrics`, `/healthz`, log terstruktur.
 
 ---
 
 ## Quickstart
 
-### 1. Persiapan
+### 1) Prasyarat
 
-* Pastikan **Go 1.22+**, **MySQL 8+**, dan **Node.js 18+** sudah terpasang.
-* Copy `.env.example` menjadi `.env` dan sesuaikan konfigurasi (DB, JWT secret, dsb).
+* Go 1.22+
+* MySQL 8+
+* Node.js 18+ (untuk FE)
 
-### 2. Database
+### 2) Setup DB
 
 ```bash
-# Jalankan migrasi
-./scripts/migrate.sh
+cp .env.example .env   # sesuaikan kredensial DB & API key jika perlu
 
-# (opsional) Seed data sample
-./scripts/seed.sh
+./scripts/migrate.sh   # migrasi schema
+./scripts/seed.sh      # (opsional) muat data contoh
 ```
 
-### 3. Jalankan Service
+### 3) Jalankan Service
 
 ```bash
-# API utama
+# API utama (HTTP)
 go run ./cmd/api
 
-# MCP Router
+# MCP Router (opsional)
 go run ./cmd/mcp-router
 
-# Worker async
+# Worker (opsional)
 go run ./cmd/worker
 ```
 
-### 4. Jalankan Frontend
+### 4) Jalankan Frontend
 
 ```bash
 cd web
 npm install
 npm run dev
+# Akses http://localhost:5173
 ```
 
-Akses di `http://localhost:5173` (default Vite).
-
 ---
 
-## Docker & Compose
+## Konfigurasi Lingkungan
 
-Untuk menjalankan semua service sekaligus:
+Contoh variabel `.env`:
 
-```bash
-# Development
-./scripts/dev_up.sh
+```env
+# Database
+DB_DSN="user:pass@tcp(localhost:3306)/mcp_oilgas?parseTime=true"
 
-# Shutdown
-./scripts/dev_down.sh
+# JWT / Admin
+ADMIN_JWT_SECRET="supersecret"
+
+# LLM (opsional)
+OPENAI_API_KEY="sk-..."
+
+# Planner
+MCP_SCHEMAS_DIR="schemas/mcp"
+PLAN_MAX_ROUTES=8
 ```
 
-File compose tersedia di `deployments/compose/`.
+> Tanpa `OPENAI_API_KEY`, sistem tetap berjalan (RAG hybrid & fallback extractive untuk answer\_with\_docs).
 
 ---
 
-## Logging & Monitoring
+## Endpoint Penting
 
-* Log aplikasi tersimpan di `logs/`.
-* Metrics Prometheus dapat diakses di endpoint `/metrics`.
-* Healthcheck endpoint `/healthz`.
+* **Health & Metrics**
+
+  * `GET /healthz`, `GET /readyz`, `GET /metrics`
+* **Chat SSE**
+
+  * `GET|POST /chat/stream?q=...` (SSE events: `plan`, `sources`, `delta`, `done`, dll.)
+* **MCP Router (HTTP-internal)**
+
+  * `POST /mcp/route` (terima plan atau pertanyaan untuk auto-pilih tool)
+* **RAG Hybrid**
+
+  * `GET|POST /rag/search_v2` → body `{"query":"...","top_k":10,"alpha":0.6}`
+    *Respon berisi `retrieved_chunks`*
+* **Domain HTTP (mirror MCP)**
+
+  * `/api/timeseries`, `/api/drilling-events`, `/api/po/status`, `/api/production`, `/api/work-orders/search`, `/api/npt/summarize`, `/api/po/vendor-compare`, `/api/answer-with-docs`, dll.
 
 ---
 
-## Catatan
+## Arsitektur & Alur Chat SSE
 
-* Proyek ini masih berupa **Proof of Concept (PoC)**.
-* Cocok sebagai referensi arsitektur MCP untuk integrasi multi‑domain di industri migas.
+1. **Planner** (LLM JSON-mode) membaca tools dari `schemas/mcp/*.schema.json`.
+2. **NormalizePlan**:
 
+   * Rute `kind:"rag"` → **`rag_search_v2`**.
+   * Perbaiki salah rute (mis. top-amount PO).
+   * Tambah RAG pendukung bila relevan.
+3. **ExecuteRoutes**:
 
+   * Jalankan MCP tools in-process.
+   * Jalankan RAG via closure `ragFn` (hybrid `/rag/search_v2` → fallback embeddings repo).
+4. **Synthesizer**:
 
+   * LLM stream jawaban berdasarkan `sources` (atau fallback extractive).
 
 ---
 
+## Normalisasi Rencana (Planner)
 
-## 4) FAQ singkat
-- **Kenapa ada spike/drop sesekali?** → Agar demo anomaly detection terasa natural.
-- **Bagaimana menambah well/tag baru?** → Edit dict `WELLS` di script Python.
-- **Bisa generate jam kerja saja?** → Ubah generator: lompat menit saat di luar jam kerja.
-- **Time zone?** → Semua timestamp disimpan UTC (`ts_utc`). Aplikasi bisa mengonversi saat menampilkan.
+Hal-hal yang otomatis ditangani:
 
+* **RAG rewrite**: semua route `kind:"rag"` (termasuk tool lama `"rag"`) diubah ke tool `rag_search_v2` dengan body `{query, top_k, alpha}`.
+* **Detect anomalies → RAG**: jika payload `detect_anomalies` tidak valid, dan pertanyaan tampak “berbasis dokumen”, maka dialihkan ke RAG.
+* **Top-N PO by amount**: deteksi frasa seperti “top/tertinggi amount PO”, tambahkan/benarkan rute `get_po_top_amount {limit, ...}`.
 
-.
-├── .env.example
-├── .gitignore
-├── Makefile
-├── README.md
-├── aaa
-├── api
-│   ├── mcp-tools.json
-│   └── openapi.yaml
-├── cmd
-│   ├── api
-│   │   └── main.go
-│   ├── mcp-router
-│   │   └── main.go
-│   └── worker
-│       └── main.go
-├── configs
-│   ├── config.yaml
-│   └── logging.yaml
-├── db
-│   └── mysql
-│       ├── migrations
-│       │   ├── 0001_init.sql
-│       │   ├── 0002_indexes.sql
-│       │   └── 0003_sample_data.sql
-│       ├── schema.sql
-│       └── seed.sql
-├── deployments
-│   ├── compose
-│   │   ├── docker-compose.dev.yaml
-│   │   └── docker-compose.prod.yaml
-│   └── docker
-│       ├── .dockerignore
-│       ├── Dockerfile
-│       └── Dockerfile.worker
-├── go.mod
-├── go.sum
-├── internal
-│   ├── app
-│   │   ├── app.go
-│   │   └── routes.go
-│   ├── config
-│   │   └── config.go
-│   ├── handlers
-│   │   ├── http
-│   │   │   ├── admin_handler.go
-│   │   │   ├── chat_sse_handler.go
-│   │   │   ├── health_handler.go
-│   │   │   ├── login_handler.go
-│   │   │   └── metrics_handler.go
-│   │   └── mcp
-│   │       ├── answer_with_docs.go
-│   │       ├── detect_anomalies_and_correlate.go
-│   │       ├── get_drilling_events.go
-│   │       ├── get_po_status.go
-│   │       ├── get_production.go
-│   │       ├── get_timeseries.go
-│   │       ├── rag_search_docs.go
-│   │       ├── search_work_orders.go
-│   │       └── summarize_npt_events.go
-│   ├── logging
-│   │   └── logging.go
-│   ├── mcp
-│   │   ├── protocol.go
-│   │   ├── registry.go
-│   │   └── router.go
-│   ├── middleware
-│   │   ├── admin_auth.go
-│   │   ├── admin_jwt.go
-│   │   ├── auth.go
-│   │   ├── rbac.go
-│   │   └── request_id.go
-│   ├── repositories
-│   │   ├── mysql
-│   │   │   ├── drilling_repo.go
-│   │   │   ├── hsse_repo.go
-│   │   │   ├── po_repo.go
-│   │   │   ├── production_repo.go
-│   │   │   ├── timeseries_repo.go
-│   │   │   └── workorders_repo.go
-│   │   └── search
-│   │       └── rag_repo.go
-│   ├── services
-│   │   ├── analytics_service.go
-│   │   ├── drilling_service.go
-│   │   ├── hsse_service.go
-│   │   └── production_service.go
-│   └── util
-│       ├── clock.go
-│       ├── errors.go
-│       └── ids.go
-├── logs
-│   ├── .gitkeep
-│   ├── access.log
-│   ├── app.log
-│   ├── audit
-│   │   ├── data_access.log
-│   │   └── tool_calls.log
-│   └── mcp_tools.log
-├── pkg
-│   ├── db
-│   │   └── mysql.go
-│   ├── vector
-│   │   └── embeddings.go
-│   └── weather
-│       └── client.go
-├── schemas
-│   ├── http
-│   │   └── responses.schema.json
-│   └── mcp
-│       ├── tool_answer_with_docs.schema.json
-│       ├── tool_detect_anomalies.schema.json
-│       ├── tool_get_drilling_events.schema.json
-│       ├── tool_get_po_status.schema.json
-│       ├── tool_get_production.schema.json
-│       ├── tool_get_timeseries.schema.json
-│       ├── tool_search_work_orders.schema.json
-│       └── tool_summarize_npt.schema.json
-├── scripts
-│   ├── dev_down.sh
-│   ├── dev_up.sh
-│   ├── healthcheck.sh
-│   ├── migrate.sh
-│   └── seed.sh
-├── testdata
-│   └── fixtures
-│       ├── docs_chunks.json
-│       ├── drilling_events.json
-│       ├── production.json
-│       └── timeseries.json
-├── tools
-│   ├── gen_dummy
-│   │   ├── README.md
-│   │   ├── generate_timeseries.py
-│   │   ├── generate_workorders.py
-│   │   ├── load_to_mysql.go
-│   │   └── sample
-│   │       └── sample_timeseries.csv
-│   └── lint
-│       └── precommit.sh
-├── treemenu
-└── web
-    ├── .env.example
-    ├── index.html
-    ├── package.json
-    ├── postcss.config.js
-    ├── public
-    │   └── favicon.svg
-    ├── src
-    │   ├── App.tsx
-    │   ├── components
-    │   │   ├── Chart.tsx
-    │   │   ├── DataTable.tsx
-    │   │   ├── Layout.tsx
-    │   │   └── Sidebar.tsx
-    │   ├── lib
-    │   │   └── api.ts
-    │   ├── main.tsx
-    │   ├── pages
-    │   │   ├── Admin.tsx
-    │   │   ├── Chat.tsx
-    │   │   ├── Dashboard.tsx
-    │   │   ├── Login.tsx
-    │   │   └── Timeseries.tsx
-    │   ├── routes.tsx
-    │   └── styles
-    │       └── index.css
-    ├── tailwind.config.js
-    ├── tsconfig.json
-    └── vite.config.ts
+---
+
+## Contoh Pertanyaan
+
+1. Berapa produksi gas `WELL_A12` pada `2025-09-05`?
+2. Bandingkan total nilai PO **status delivered** antara **SLB** dan **Weatherford** pada `2025-09-20` s/d `2025-10-06`.
+3. Berikan ringkasan jumlah PO per status terbaru.
+4. Bandingkan total nilai PO antara **Halliburton**, **NOV**, dan **Weatherford** periode `2025-09-01` s/d `2025-10-11`.
+5. *Emergency Response Plan*.
+6. *Production Forecast Q4 2025*.
+7. Ambil produksi gas `WELL_E05` pada `2025-09-01`.
+8. Berapa produksi `WELL_B07` pada September 2025?
+9. Tampilkan produksi gas `WELL_C03` pada `2025-09-04`.
+10. Ambil nilai produksi terbaru untuk `WELL_A12`.
+11. Tampilkan semua event **NPT** pada `WELL_B07` selama September 2025.
+12. Apa saja event drilling di `WELL_D02` pada minggu 7–13 September 2025?
+13. Daftar event **NPT** di `WELL_E05` pada 3 September 2025?
+14. Ambil semua drilling event di `WELL_C03` antara 24–30 September 2025.
+15. Event apa saja yang terjadi di `WELL_F10` pada 10 September 2025?
+16. Tampilkan **trend flow rate** `FLOW_A12` pada 1 September 2025 pukul 00:00–00:23.
+17. Nilai flow rate dengan `quality=0` pada `FLOW_A12` selama 11–12 September 2025?
+18. Trend perbandingan **rata-rata 5-menit** di `FLOW_A12` awal 1 Sep 2025?
+19. Ada penurunan signifikan flow rate antara 14 Sep 2025 00:05–00:10 vs 00:15–00:20 di `FLOW_A12`?
+20. Ambil **oil rate** `OIL_D01` untuk 18 Sep 2025 penuh (00:00–23:59).
+21. Tampilkan **trend** `OIL_B07` pada minggu 15–16 Sep 2025.
+22. Ambil **oil rate** `FLOW_A12` antara 06:00–12:00 pada `2025-09-01`.
+23. Bandingkan flow rate `OIL_D01` vs `OIL_D02` pada 18 Sep 2025.
+24. Ambil timeseries untuk `FLOW_C03`, `FLOW_E05`, `FLOW_F10` selama 3 Sep 2025, lalu tampilkan **rata-rata harian**.
+
+---
+
+## Troubleshooting
+
+**1) `/chat/stream` tidak menemukan dokumen (retrieved\_chunks kosong)**
+
+* Cek endpoint hybrid:
+
+  ```bash
+  curl "http://localhost:8080/rag/search_v2?q=Production%20Forecast%20Q4%202025"
+  ```
+
+  Pastikan respon berformat:
+
+  ```json
+  {
+    "query":"...",
+    "alpha":0.6,
+    "count":10,
+    "retrieved_chunks":[
+      {"doc_id":"DOC-1005","title":"...","url":"...","page_no":3,"snippet":"...","score":0.123}
+    ]
+  }
+  ```
+* Jika struktur sudah benar namun SSE masih kosong, pastikan **NormalizePlan** aktif dan `ragFn` pada `chat_sse_handler.go` membaca `retrieved_chunks[*].page_no` (bukan `page`).
+
+**2) Error decode saat MCP plan RAG**
+
+* Pastikan consumer mem‐decode **objek** yang memiliki field `retrieved_chunks` (bukan langsung slice).
+* Contoh decode benar (Go):
+
+  ```go
+  var resp struct {
+    RetrievedChunks []struct {
+      DocID string `json:"doc_id"`
+      ...
+    } `json:"retrieved_chunks"`
+  }
+  ```
+
+**3) LLM/Embeddings tidak tersedia**
+
+* Sistem tetap jalan: RAG hybrid + fallback extractive pada `answer_with_docs`.
+  Tambahkan `OPENAI_API_KEY` untuk jawaban yang lebih natural.
+
+**4) Observability**
+
+* Cek `/healthz`, `/metrics`, dan log di `logs/`.
+
+---
+
+## Lisensi
+
+MIT — lihat berkas `LICENSE`.
+
+## Kredit
+
+Dikembangkan oleh **Kukuh Tripamungkas Wicaksono (Kukuh TW)** sebagai PoC arsitektur MCP + RAG untuk domain migas.
