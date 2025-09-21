@@ -81,7 +81,6 @@ Fitur utama:
 
 ## Isi Singkat
 
-* [Struktur Proyek](#struktur-proyek)
 * [Fitur Utama](#fitur-utama)
 * [Quickstart](#quickstart)
 * [Konfigurasi Lingkungan](#konfigurasi-lingkungan)
@@ -371,6 +370,26 @@ Hal-hal yang otomatis ditangani:
 ## Lisensi
 
 MIT — lihat berkas `LICENSE`.
+
+💡 Kenapa Menggunakan Go (Golang)?
+
+Proyek MCP + RAG dibangun dengan Go karena beberapa alasan teknis dan bisnis yang sangat relevan untuk industri migas:
+
+🚀 Performa Tinggi & Efisiensi
+Compiled → binary cepat, stabil, minim overhead.
+Ideal untuk query lintas domain dengan latensi rendah.
+
+⚡ Concurrency dengan Goroutines
+Data dari banyak sumber (SCADA, IoT, ERP) bisa ditarik paralel.
+
+🛡️ Stabil & Teruji
+Digunakan di Kubernetes, Docker, Hashicorp Consul.
+
+📦 Deploy Mudah (Single Binary)
+Tidak ada dependency hell, mudah pindah ke on-premise/private cloud.
+
+🔄 Mendukung Real-Time Streaming (SSE)
+Ribuan koneksi tetap ringan dengan net/http dan goroutines.
 
 ## Kredit
 
