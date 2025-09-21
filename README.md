@@ -110,10 +110,6 @@ flowchart TD
   %% Optional embeddings at ingest time
   LLM -. embeddings .-> CHUNKS
 
-
-
-
-
 ```
 
 ---
