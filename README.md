@@ -89,7 +89,7 @@ flowchart TD
   REG --> NORM
   SSE -->|Plan → Normalize| NORM
 
-  NORM -->|Routes (RAG/MCP)| TOOLS
+  NORM -->|Routes RAG MCP | TOOLS
   NORM -->|RAG routes to /rag/search_v2| RAG_V2
   RAG_V2 --> RAGSRV
   RAGSRV --> CHUNKS
