@@ -40,7 +40,7 @@ Summary : Monorepo PoC MCP + RAG untuk studi kasus perusahaan migas.
 * [Lisensi](#lisensi)
 * [Kredit](#kredit)
 
----mermaid
+```mermaid
 flowchart TD
     %% LAYER: Client
     subgraph CLIENT[Client]
