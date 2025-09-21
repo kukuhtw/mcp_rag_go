@@ -41,6 +41,7 @@ Summary : Monorepo PoC MCP + RAG untuk studi kasus perusahaan migas.
 * [Kredit](#kredit)
 
 ```mermaid
+
 flowchart TD
   %% LAYER: Client
   subgraph CLIENT["Client"]
@@ -109,6 +110,8 @@ flowchart TD
 
   %% Optional embeddings at ingest time
   LLM -. embeddings .-> CHUNKS
+
+
 
 ```
 
