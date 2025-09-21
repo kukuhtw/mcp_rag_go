@@ -15,13 +15,38 @@ Alih-alih hanya mengandalkan model, RAG mengambil potongan teks relevan dari dat
 
 ---
 
-## 📌 Overview Manfaat
-Solusi **MCP + RAG** ini membantu perusahaan migas untuk:  
-- 🔎 **Akses cepat lintas domain**: query user bisa langsung menjangkau data drilling, produksi, HSSE, PO, atau timeseries.  
-- 📚 **Jawaban bersumber dokumen**: hasil yang diberikan memiliki sitasi, memudahkan audit & verifikasi.  
-- ⚡ **Efisiensi kerja**: mengurangi waktu pencarian manual lintas departemen.  
-- 🤖 **Integrasi AI modern**: mendukung LLM (OpenAI) untuk natural query & embeddings.  
-- 🔧 **Fleksibel & extensible**: bisa ditambah tools/domain baru sesuai kebutuhan industri.  
+## 🛑 Problem
+
+Di industri migas, data operasional tersebar di banyak domain dan sistem terpisah:
+- **Drilling** → laporan pengeboran & NPT (Non Productive Time).
+- **Production** → data produksi harian & timeseries.
+- **HSSE** → catatan insiden & laporan keselamatan.
+- **Purchase Order** → status pembelian & vendor.
+- **Dokumen teknis** → file PDF/Word yang terpecah di berbagai departemen.
+
+Akibatnya, untuk menjawab satu pertanyaan sederhana (misalnya *"berapa banyak insiden HSSE di rig B07 bulan ini?"*), user harus:
+- Menghubungi beberapa tim/departemen.  
+- Mencari file laporan manual.  
+- Menunggu validasi & rekap data.  
+
+Proses ini bisa memakan waktu **berhari-hari** dan rentan inkonsistensi antar sumber.
+
+---
+
+## ✅ Solusi
+
+Proyek **MCP + RAG** ini menawarkan pendekatan modern:
+- **MCP Router** → bertindak sebagai *smart gateway* yang mengarahkan pertanyaan user ke domain/data repository yang tepat (drilling, production, HSSE, PO, timeseries).  
+- **RAG Search** → menggabungkan *keyword search (BM25)* dan *semantic search (cosine similarity)* untuk mengambil potongan dokumen paling relevan.  
+- **LLM Integration** → query natural language dari user dipahami & dijawab dengan konteks, lengkap dengan sitasi dari dokumen sumber.  
+- **Chat SSE** → jawaban dikirim secara *streaming* sehingga interaktif, mirip chat dengan asisten AI.  
+
+### Dampak bagi perusahaan migas:
+- ⏱ **Lebih cepat** → jawaban lintas domain dalam hitungan detik.  
+- 📊 **Lebih akurat** → jawaban berbasis dokumen & sitasi, mudah diverifikasi.  
+- 🔄 **Lebih efisien** → kurangi beban koordinasi antar departemen.  
+- 🧩 **Lebih fleksibel** → mudah diperluas dengan tools/domain tambahan sesuai kebutuhan bisnis.  
+.  
 
 ---
 
