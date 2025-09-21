@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "get_po_vendor_compare",
+  "description": "Komparasi total nilai PO antar vendor pada rentang tanggal.",
+  "type": "object",
+  "properties": {
+    "vendors": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 2,
+      "uniqueItems": true,
+      "description": "Daftar vendor, misalnya [\"Halliburton\", \"NOV\", \"Weatherford\"]."
+    },
+    "start_date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Tanggal mulai (YYYY-MM-DD), inclusive."
+    },
+    "end_date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Tanggal akhir (YYYY-MM-DD), exclusive bila handler menambahkan +1 hari."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["created", "approved", "in_transit", "delivered", "closed"],
+      "description": "Opsional filter status (dinormalisasi ke underscore)."
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD",
+      "description": "Label mata uang untuk output (tidak mempengaruhi query)."
+    }
+  },
+  "required": ["vendors", "start_date", "end_date"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "vendors": ["Halliburton", "NOV", "Weatherford"],
+      "start_date": "2025-09-01",
+      "end_date": "2025-10-31"
+    },
+    {
+      "vendors": ["Halliburton", "NOV", "Weatherford"],
+      "start_date": "2025-09-01",
+      "end_date": "2025-10-31",
+      "status": "delivered",
+      "currency": "USD"
+    }
+  ]
+}

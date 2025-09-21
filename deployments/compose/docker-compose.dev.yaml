@@ -1,0 +1,126 @@
+# deployments/compose/docker-compose.dev.yaml
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mcp-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mcp
+      MYSQL_USER: mcpuser
+      MYSQL_PASSWORD: secret
+    ports:
+      - "13306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ../../db/mysql/schema.sql:/docker-entrypoint-initdb.d/00-schema.sql:ro
+      - ../../db/mysql/migrations:/docker-entrypoint-initdb.d/migrations:ro
+      - ../../db/mysql/run-migrations.sh:/docker-entrypoint-initdb.d/01-run-migrations.sh:ro
+      - ../../db/mysql/seed.sql:/docker-entrypoint-initdb.d/99-seed.sql:ro
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    build:
+      context: ../..
+      dockerfile: deployments/docker/Dockerfile.web
+      args:
+         VITE_API_BASE: http://localhost:8080
+    container_name: mcp-web
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+    networks:
+      - default
+
+  adminer:
+    image: adminer:4
+    container_name: mcp-adminer
+    ports:
+      - "18080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - default
+
+  # deployments/compose/docker-compose.dev.yaml
+
+  api:
+    build:
+      context: ../..
+      dockerfile: deployments/docker/Dockerfile
+    container_name: mcp-api
+    env_file:
+      - ../../.env
+      - ./openai.env        # <— tambahkan baris ini
+    environment:
+      - DB_DSN_DOCKER=mcpuser:secret@tcp(mysql:3306)/mcp?parseTime=true&multiStatements=true
+      - LOG_LEVEL=debug
+      - APP_ENV=dev
+      - RETURN_ERRORS=1
+      - MCP_SCHEMAS_DIR=/app/schemas/mcp
+      # ---- penting: pastikan ini ada ----OPENAI_API_KEY
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
+      - OPENAI_API_BASE=${OPENAI_API_BASE:-https://api.openai.com/v1}
+ 
+      # >>> penting: absolute ke mount /app/logs <<<
+      - LOG_FILE=/app/logs/app.log
+      - ACCESS_LOG_FILE=/app/logs/access.log
+      - MCP_LOG_FILE=/app/logs/mcp_tools.log
+      - AUDIT_TOOL_CALLS=/app/logs/audit/tool_calls.log
+      - AUDIT_DATA_ACCESS=/app/logs/audit/data_access.log
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ../../logs:/app/logs
+      - ../../uploads:/app/uploads
+    networks:
+      - default
+
+  dev:
+    image: golang:1.23-bullseye
+    container_name: mcp-dev
+    working_dir: /app
+    volumes:
+      - ../..:/app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    env_file:
+      - ../../.env        # <— tambahkan ini agar `ingest-docs` dkk punya OPENAI_API_KEY
+    command: tail -f /dev/null
+    tty: true
+    stdin_open: true
+    networks:
+      - default
+
+  py:
+    image: python:3.11-slim
+    container_name: mcp-py
+    working_dir: /app
+    volumes:
+      - ../..:/app
+    depends_on:
+      - mysql
+    command: tail -f /dev/null
+    tty: true
+    stdin_open: true
+    networks:
+      - default
+
+volumes:
+  mysql_data:
+
+networks:
+  default:
+    driver: bridge
+
+    

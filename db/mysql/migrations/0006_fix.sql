@@ -1,0 +1,2 @@
+-- 0005_noop.sql
+-- Placeholder (sengaja kosong). Semua perubahan sudah tercakup di 0001-0003.

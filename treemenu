@@ -1,0 +1,228 @@
+.
+├── .env
+├── .env.example
+├── .gitignore
+├── ERROR
+├── Makefile
+├── README.md
+├── [builder
+├── aaa
+├── api
+│   ├── mcp-tools.json
+│   └── openapi.yaml
+├── bin
+├── clean.sh
+├── cmd
+│   ├── api
+│   │   └── main.go
+│   ├── ingest-docs
+│   │   └── main.go
+│   ├── mcp-router
+│   │   └── main.go
+│   └── worker
+│       └── main.go
+├── configs
+│   ├── config.yaml
+│   └── logging.yaml
+├── db
+│   └── mysql
+│       ├── migrations
+│       │   ├── 0001_init.sql
+│       │   ├── 0002_indexes.sql
+│       │   ├── 0003_sample_data.sql
+│       │   ├── 0004_doc_chunks_embedding.sql
+│       │   ├── 0005_fix_po_and_indexes.sql
+│       │   └── 0006_fix.sql
+│       ├── run-migrations.sh
+│       ├── schema.sql
+│       └── seed.sql
+├── deployments
+│   ├── compose
+│   │   ├── .env
+│   │   ├── docker-compose.dev.yaml
+│   │   ├── docker-compose.prod.yaml
+│   │   └── openai.env
+│   └── docker
+│       ├── .dockerignore
+│       ├── Dockerfile
+│       ├── Dockerfile.web
+│       └── Dockerfile.worker
+├── go.mod
+├── go.sum
+├── internal
+│   ├── app
+│   │   ├── app.go
+│   │   ├── routes.go
+│   │   └── routes_test.go
+│   ├── config
+│   │   └── config.go
+│   ├── handlers
+│   │   ├── http
+│   │   │   ├── admin_handler.go
+│   │   │   ├── ask_handler.go
+│   │   │   ├── chat_sse_handler.go
+│   │   │   ├── cors_handler.go
+│   │   │   ├── debug_repos.go
+│   │   │   ├── health_handler.go
+│   │   │   ├── login_handler.go
+│   │   │   └── metrics_handler.go
+│   │   └── mcp
+│   │       ├── answer_with_docs.go
+│   │       ├── detect_anomalies_and_correlate.go
+│   │       ├── get_drilling_events.go
+│   │       ├── get_po_status.go
+│   │       ├── get_po_top_amount.go
+│   │       ├── get_po_vendor_compare.go
+│   │       ├── get_po_vendor_summary.go
+│   │       ├── get_production.go
+│   │       ├── get_timeseries.go
+│   │       ├── rag_search_docs.go
+│   │       ├── ready_flags.go
+│   │       ├── search_work_orders.go
+│   │       └── summarize_npt_events.go
+│   ├── llm
+│   │   └── openai_client.go
+│   ├── logging
+│   │   └── logging.go
+│   ├── mcp
+│   │   ├── exec.go
+│   │   ├── llm
+│   │   │   ├── openai.go
+│   │   │   └── planner.go
+│   │   ├── mcp-tools.json
+│   │   ├── plan.go
+│   │   ├── protocol.go
+│   │   ├── registry.go
+│   │   ├── router.go
+│   │   ├── router_test.go
+│   │   └── tools_def.go
+│   ├── middleware
+│   │   ├── admin_auth.go
+│   │   ├── admin_jwt.go
+│   │   ├── auth.go
+│   │   ├── cors.go
+│   │   ├── rbac.go
+│   │   └── request_id.go
+│   ├── repositories
+│   │   ├── mysql
+│   │   │   ├── drilling_repo.go
+│   │   │   ├── hsse_repo.go
+│   │   │   ├── po_repo.go
+│   │   │   ├── production_repo.go
+│   │   │   ├── timeseries_repo.go
+│   │   │   ├── util.go
+│   │   │   └── workorders_repo.go
+│   │   └── search
+│   │       └── rag_repo.go
+│   ├── services
+│   │   ├── analytics_service.go
+│   │   ├── drilling_service.go
+│   │   ├── hsse_service.go
+│   │   └── production_service.go
+│   └── util
+│       ├── clock.go
+│       ├── errors.go
+│       ├── ids.go
+│       └── sse
+│           └── sse.go
+├── logs
+│   ├── .gitkeep
+│   ├── access.log
+│   ├── app.log
+│   ├── audit
+│   │   ├── data_access.log
+│   │   └── tool_calls.log
+│   └── mcp_tools.log
+├── openai.env
+├── pkg
+│   ├── db
+│   │   └── mysql.go
+│   ├── vector
+│   │   └── embeddings.go
+│   └── weather
+│       └── client.go
+├── schemas
+│   ├── http
+│   │   └── responses.schema.json
+│   └── mcp
+│       ├── tool_answer_with_docs.schema.json
+│       ├── tool_detect_anomalies.schema.json
+│       ├── tool_get_drilling_events.schema.json
+│       ├── tool_get_po_by_number.schema.json
+│       ├── tool_get_po_status.schema.json
+│       ├── tool_get_po_vendor_compare.schema.json
+│       ├── tool_get_po_vendor_summary.schema.json
+│       ├── tool_get_production.schema.json
+│       ├── tool_get_timeseries.schema.json
+│       ├── tool_search_work_orders.schema.json
+│       └── tool_summarize_npt.schema.json
+├── scripts
+│   ├── dev_down.sh
+│   ├── dev_up.sh
+│   ├── healthcheck.sh
+│   ├── migrate.sh
+│   └── seed.sh
+├── testdata
+│   └── fixtures
+│       ├── docs_chunks.json
+│       ├── drilling_events.json
+│       ├── production.json
+│       └── timeseries.json
+├── tools
+│   ├── gen_dummy
+│   │   ├── README.md
+│   │   ├── generate_docs.py
+│   │   ├── generate_timeseries.py
+│   │   ├── generate_workorders.py
+│   │   ├── load_to_mysql.go
+│   │   └── sample
+│   │       ├── sample_timeseries.csv
+│   │       ├── sample_doc_chunks.csv
+│   │       ├── sample_drilling_events.csv
+│   │       ├── sample_hsse_incidents.csv
+│   │       ├── sample_prod_daily.csv
+│   │       ├── sample_purchase_orders.csv
+│   │       ├── sample_timeseries.csv
+│   │       ├── sample_ts_signal.csv
+│   │       └── sample_wells.csv
+│   │       └── sample_work_orders.csv
+│   └── lint
+│       └── precommit.sh
+├── treemenu
+├── uploads
+└── web
+    ├── .env
+    ├── .env.example
+    ├── index.html
+    ├── mcp-oilgas-web@0.0.1
+    ├── node_modules
+    ├── package-lock.json
+    ├── package.json
+    ├── postcss.config.cjs
+    ├── postcss.config.js
+    ├── public
+    │   └── favicon.svg
+    ├── src
+    │   ├── App.tsx
+    │   ├── components
+    │   │   ├── Chart.tsx
+    │   │   ├── DataTable.tsx
+    │   │   ├── Layout.tsx
+    │   │   └── Sidebar.tsx
+    │   ├── index.css
+    │   ├── lib
+    │   │   └── api.ts
+    │   ├── main.tsx
+    │   ├── pages
+    │   │   ├── Admin.tsx
+    │   │   ├── Chat.tsx
+    │   │   ├── Dashboard.tsx
+    │   │   ├── Login.tsx
+    │   │   └── Timeseries.tsx
+    │   ├── routes.tsx
+    │   └── styles
+    │       └── index.css
+    ├── tailwind.config.js
+    ├── tsconfig.json
+    └── vite
+        └── vite.config.ts

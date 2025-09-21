@@ -1,0 +1,3 @@
+# tools/gen_dummy/sample/sample_timeseries.csv
+ts_utc,flow_mmscfd,whp_psig,wht_c,quality
+2025-09-18T10:00:00Z,12.1,850,72,1

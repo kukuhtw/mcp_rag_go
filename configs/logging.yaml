@@ -1,0 +1,16 @@
+# configs/logging.yaml
+# Konfigurasi logging aplikasi
+
+logging:
+  level: debug        # debug | info | warn | error
+  format: json        # json | text
+  output_file: logs/app.log
+  access_file: logs/access.log
+  mcp_file: logs/mcp_tools.log
+  audit:
+    tool_calls: logs/audit/tool_calls.log
+    data_access: logs/audit/data_access.log
+  rotation:
+    max_size_mb: 50
+    max_backups: 5
+    max_age_days: 30

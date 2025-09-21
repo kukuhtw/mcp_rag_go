@@ -1,0 +1,6 @@
+// testdata/fixtures/production.json
+[
+  { "date": "2025-09-17", "well_id": "WELL_A12", "gas_mmscfd": 11.8 },
+  { "date": "2025-09-18", "well_id": "WELL_A12", "gas_mmscfd": 11.4 },
+  { "date": "2025-09-17", "well_id": "WELL_B07", "gas_mmscfd": 8.2 }
+]

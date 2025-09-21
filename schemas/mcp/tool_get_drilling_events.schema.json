@@ -1,0 +1,11 @@
+// schemas/mcp/tool_get_drilling_events.schema.json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tool Get Drilling Events",
+  "type": "object",
+  "properties": {
+    "well_id": { "type": "string" },
+    "start": { "type": "string", "format": "date-time" },
+    "end": { "type": "string", "format": "date-time" }
+  }
+}

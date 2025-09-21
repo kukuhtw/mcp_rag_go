@@ -1,0 +1,20 @@
+// schemas/mcp/tool_summarize_npt.schema.json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tool Summarize NPT Events",
+  "type": "object",
+  "properties": {
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sub_cause": { "type": "string" },
+          "hours": { "type": "number" },
+          "cost_usd": { "type": "number" }
+        },
+        "required": ["sub_cause", "hours"]
+      }
+    }
+  }
+}

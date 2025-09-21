@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RAG Search V2 (Hybrid)",
+  "type": "object",
+  "properties": {
+    "query": { "type": "string" },
+    "query_embedding": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 16
+    },
+    "top_k": { "type": "integer", "minimum": 1, "maximum": 100 },
+    "alpha": { "type": "number", "minimum": 0, "maximum": 1 }
+  },
+  "anyOf": [
+    { "required": ["query"] },
+    { "required": ["query_embedding"] }
+  ],
+  "examples": [
+    { "query": "Safety Training Manual", "top_k": 8, "alpha": 0.6 },
+    { "query_embedding": [0.012, -0.004, 0.33, 0.18], "top_k": 8, "alpha": 0.4 },
+    { "query": "Permit to Work", "query_embedding": [0.09, 0.02, 0.11, -0.03], "alpha": 0.5 }
+  ]
+}

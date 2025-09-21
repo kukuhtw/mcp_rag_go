@@ -1,0 +1,62 @@
+openapi: 3.0.3
+info:
+  title: MCP Oil & Gas API
+  version: "0.1.0"
+servers:
+  - url: http://localhost:8080
+paths:
+  /healthz:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+  /timeseries:
+    get:
+      summary: Fetch timeseries values
+      parameters:
+        - in: query
+          name: tag_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: start
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: end
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            default: 200
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tag_id:
+                    type: string
+                  points:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ts_utc:
+                          type: string
+                          format: date-time
+                        value:
+                          type: number
+                        quality:
+                          type: integer

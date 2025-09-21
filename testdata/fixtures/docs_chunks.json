@@ -1,0 +1,24 @@
+// testdata/fixtures/docs_chunks.json
+[
+  {
+    "doc_id": "doc-123",
+    "title": "Risk Register 2025",
+    "url": "https://intranet.example.com/docs/risk-register-2025",
+    "snippet": "Key risks include stuck pipe events and mud losses at Well B-07. Mitigation involves additional casing strings and improved mud circulation procedures.",
+    "page_no": 2
+  },
+  {
+    "doc_id": "doc-123",
+    "title": "Risk Register 2025",
+    "url": "https://intranet.example.com/docs/risk-register-2025",
+    "snippet": "Weather-related standby time at offshore rigs is expected to rise during the monsoon season. Contingency planning is recommended.",
+    "page_no": 3
+  },
+  {
+    "doc_id": "doc-123",
+    "title": "Risk Register 2025",
+    "url": "https://intranet.example.com/docs/risk-register-2025",
+    "snippet": "Equipment failure, particularly BOP control systems, remains a high-cost contributor to NPT. Vendor audits and preventive maintenance are key measures.",
+    "page_no": 4
+  }
+]

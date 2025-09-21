@@ -1,0 +1,12 @@
+// schemas/http/responses.schema.json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HTTP Standard Response",
+  "type": "object",
+  "properties": {
+    "status": { "type": "string" },
+    "data": { "type": "object" },
+    "error": { "type": "string" }
+  },
+  "required": ["status"]
+}

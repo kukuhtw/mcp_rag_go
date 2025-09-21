@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "get_po_vendor_compare",
+  "type": "object",
+  "properties": {
+    "vendors": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 2,
+      "description": "Daftar vendor, mis. [\"Halliburton\",\"NOV\",\"Weatherford\"]"
+    },
+    "start_date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "end_date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["created","approved","in_transit","delivered","closed"],
+      "description": "Opsional filter status"
+    },
+    "currency": {
+      "type": "string",
+      "description": "Opsional, hanya untuk pelabelan output",
+      "default": "USD"
+    }
+  },
+  "required": ["vendors","start_date","end_date"],
+  "additionalProperties": false
+}

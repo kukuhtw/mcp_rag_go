@@ -1,0 +1,8 @@
+well_id,name,type,status
+WELL_A12,WELL_A12 Name,gas,active
+WELL_B07,WELL_B07 Name,gas,active
+WELL_C03,WELL_C03 Name,gas,active
+WELL_D01,WELL_D01 Name,oil,active
+WELL_D02,WELL_D02 Name,oil,active
+WELL_E05,WELL_E05 Name,gas,active
+WELL_F10,WELL_F10 Name,gas,inactive

@@ -1,0 +1,19 @@
+// testdata/fixtures/drilling_events.json
+[
+  {
+    "well_id": "WELL_A12",
+    "event_type": "NPT",
+    "sub_cause": "stuck pipe",
+    "start_time": "2025-09-17T08:00:00Z",
+    "end_time": "2025-09-17T12:00:00Z",
+    "cost_usd": 5000
+  },
+  {
+    "well_id": "WELL_B07",
+    "event_type": "NPT",
+    "sub_cause": "waiting on weather",
+    "start_time": "2025-09-18T04:00:00Z",
+    "end_time": "2025-09-18T06:00:00Z",
+    "cost_usd": 2000
+  }
+]

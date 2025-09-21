@@ -1,0 +1,10 @@
+// schemas/mcp/tool_get_po_status.schema.json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tool Get PO Status",
+  "type": "object",
+  "properties": {
+    "po_number": { "type": "string" }
+  },
+  "required": ["po_number"]
+}

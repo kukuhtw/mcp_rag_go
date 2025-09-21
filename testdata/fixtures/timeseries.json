@@ -1,0 +1,9 @@
+// testdata/fixtures/timeseries.json
+{
+  "tag_id": "FLOW_A12",
+  "points": [
+    { "ts_utc": "2025-09-18T10:00:00Z", "value": 12.1, "quality": 1 },
+    { "ts_utc": "2025-09-18T10:01:00Z", "value": 11.9, "quality": 1 },
+    { "ts_utc": "2025-09-18T10:02:00Z", "value": 12.0, "quality": 1 }
+  ]
+}

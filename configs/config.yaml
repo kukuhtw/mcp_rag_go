@@ -1,0 +1,27 @@
+# configs/config.yaml
+# Konfigurasi utama aplikasi MCP Oil & Gas
+
+app:
+  name: mcp-oilgas
+  env: development
+  port: 8080
+  mcp_port: 8090
+  graceful_timeout: 20s
+
+database:
+  driver: mysql
+  host: mysql
+  port: 3306
+  name: mcp
+  user: mcpuser
+  password: secret
+  max_open_conns: 20
+  max_idle_conns: 10
+
+observability:
+  metrics_port: 9102
+  tracing_enabled: false
+
+auth:
+  api_key: ""
+  rbac_enabled: true

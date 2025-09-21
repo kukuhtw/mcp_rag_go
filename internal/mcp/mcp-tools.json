@@ -1,0 +1,44 @@
+{
+  "tools": [
+    {
+      "name": "get_timeseries",
+      "description": "Ambil data time-series (mis. produksi, tekanan) dalam rentang waktu tertentu, kembalikan poin data untuk digrafikkan.",
+      "input_schema": "schemas/mcp/tool_get_timeseries.schema.json"
+    },
+    {
+      "name": "answer_with_docs",
+      "description": "Jawab pertanyaan berbasis dokumen (RAG). Gunakan pencarian dokumen untuk menemukan potongan (snippets) yang relevan.",
+      "input_schema": "schemas/mcp/tool_answer_with_docs.schema.json"
+    },
+    {
+      "name": "get_drilling_events",
+      "description": "Ambil daftar event drilling (termasuk NPT) dengan filter sumur/periodenya.",
+      "input_schema": "schemas/mcp/tool_get_drilling_events.schema.json"
+    },
+    {
+      "name": "search_work_orders",
+      "description": "Cari work order berdasarkan asset/area/status/due date.",
+      "input_schema": "schemas/mcp/tool_search_work_orders.schema.json"
+    },
+    {
+      "name": "detect_anomalies_and_correlate",
+      "description": "Deteksi anomali sederhana dan korelasi antar series menggunakan z-score & korelasi Pearson.",
+      "input_schema": "schemas/mcp/tool_detect_anomalies.schema.json"
+    },
+    {
+      "name": "get_po_status",
+      "description": "Cek status Purchase Order (PO) berdasarkan nomor atau vendor.",
+      "input_schema": "schemas/mcp/tool_get_po_status.schema.json"
+    },
+    {
+      "name": "get_production",
+      "description": "Ambil ringkasan produksi harian/mingguan/bulanan per sumur/field.",
+      "input_schema": "schemas/mcp/tool_get_production.schema.json"
+    },
+    {
+      "name": "summarize_npt_events",
+      "description": "Ringkas NPT events beserta akar penyebabnya dari rentang tanggal tertentu.",
+      "input_schema": "schemas/mcp/tool_summarize_npt.schema.json"
+    }
+  ]
+}

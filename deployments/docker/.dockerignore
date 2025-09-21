@@ -1,0 +1,6 @@
+**/.git
+**/logs/*
+**/testdata/*
+**/*.log
+**/*.zip
+**/tools/gen_dummy/sample/*

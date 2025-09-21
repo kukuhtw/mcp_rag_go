@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "get_po_by_number",
+  "description": "Ambil detail 1 Purchase Order berdasarkan nomor PO.",
+  "type": "object",
+  "properties": {
+    "po_number": {
+      "type": "string",
+      "description": "Nomor Purchase Order, misalnya 'PO-2025-000123'."
+    }
+  },
+  "required": ["po_number"],
+  "additionalProperties": false,
+  "examples": [
+    { "po_number": "PO-2025-000123" }
+  ]
+}

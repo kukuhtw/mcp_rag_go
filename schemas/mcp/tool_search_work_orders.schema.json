@@ -1,0 +1,11 @@
+// schemas/mcp/tool_search_work_orders.schema.json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tool Search Work Orders",
+  "type": "object",
+  "properties": {
+    "area": { "type": "string" },
+    "priority": { "type": "integer" },
+    "status": { "type": "string" }
+  }
+}

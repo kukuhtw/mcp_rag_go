@@ -1,0 +1,22 @@
+// schemas/mcp/tool_answer_with_docs.schema.json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tool Answer With Docs",
+  "type": "object",
+  "properties": {
+    "question": { "type": "string" },
+    "retrieved_chunks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "doc_id": { "type": "string" },
+          "snippet": { "type": "string" },
+          "url": { "type": "string" }
+        },
+        "required": ["doc_id", "snippet"]
+      }
+    }
+  },
+  "required": ["question"]
+}

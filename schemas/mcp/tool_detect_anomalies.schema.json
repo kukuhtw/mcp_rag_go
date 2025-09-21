@@ -1,0 +1,31 @@
+// schemas/mcp/tool_detect_anomalies.schema.json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tool Detect Anomalies",
+  "type": "object",
+  "properties": {
+    "series": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "points": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ts_utc": { "type": "string", "format": "date-time" },
+                "value": { "type": "number" }
+              },
+              "required": ["ts_utc", "value"]
+            }
+          }
+        },
+        "required": ["name", "points"]
+      }
+    },
+    "min_zscore": { "type": "number" }
+  },
+  "required": ["series"]
+}

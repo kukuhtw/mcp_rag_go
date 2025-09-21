@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  api:
+    image: mcp-oilgas:latest
+    container_name: mcp-api
+    restart: unless-stopped
+    env_file:
+      - ../..//.env
+    ports:
+      - "8080:8080"
+
+  web:
+    image: node:20-alpine
+    container_name: mcp-web
+    working_dir: /app
+    volumes:
+      - ../../web:/app
+    # Build sekali lalu serve dist lewat Vite preview
+    command: sh -c "npm ci && npm run build && npm run preview -- --host 0.0.0.0 --port 5173"
+    environment:
+      - VITE_API_BASE=http://api:8080
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api

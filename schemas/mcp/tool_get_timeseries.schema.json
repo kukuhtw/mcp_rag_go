@@ -1,0 +1,13 @@
+// schemas/mcp/tool_get_timeseries.schema.json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tool Get Timeseries",
+  "type": "object",
+  "properties": {
+    "tag_id": { "type": "string" },
+    "start": { "type": "string", "format": "date-time" },
+    "end": { "type": "string", "format": "date-time" },
+    "limit": { "type": "integer", "minimum": 1, "maximum": 5000 }
+  },
+  "required": ["tag_id"]
+}
