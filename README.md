@@ -286,7 +286,7 @@ Hal-hal yang otomatis ditangani:
 
 ## Contoh Pertanyaan
 
-1. Berapa produksi gas `WELL_A12` pada `2025-09-05`?
+1. Berapa produksi  `WELL_A12` pada `2025-09-05`?
 2. Bandingkan total nilai PO **status delivered** antara **SLB** dan **Weatherford** pada `2025-09-20` s/d `2025-10-06`.
 3. Berikan ringkasan jumlah PO per status terbaru.
 4. Bandingkan total nilai PO antara **Halliburton**, **NOV**, dan **Weatherford** periode `2025-09-01` s/d `2025-10-11`.
