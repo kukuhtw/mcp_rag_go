@@ -10,7 +10,8 @@ Dengan MCP, pertanyaan user bisa otomatis dipetakan ke domain tertentu (misalnya
 # Apa itu RAG?  
 **Retrieval-Augmented Generation (RAG)** adalah teknik menggabungkan kemampuan LLM dengan pencarian berbasis dokumen.  
 Alih-alih hanya mengandalkan model, RAG mengambil potongan teks relevan dari database (misalnya `doc_chunks`), lalu menggunakannya untuk menghasilkan jawaban yang lebih akurat dan bersitasi.  
-==============================================================================  
+
+
 ```
 ==============================================================================
 Project : MCP_RAG (Oil & Gas) — Go
