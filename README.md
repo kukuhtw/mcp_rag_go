@@ -159,9 +159,7 @@ make ingest-docs
 ### 4) Jalankan Frontend
 
 ```bash
-cd web
-npm install
-npm run dev
+
 # Akses http://localhost:5173
 ```
 
