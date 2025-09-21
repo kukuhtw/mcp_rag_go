@@ -47,6 +47,10 @@ Proyek **MCP + RAG** ini menawarkan pendekatan modern:
 - 🔄 **Lebih efisien** → kurangi beban koordinasi antar departemen.  
 - 🧩 **Lebih fleksibel** → mudah diperluas dengan tools/domain tambahan sesuai kebutuhan bisnis.  
 .  
+---
+---
+[![Demo Video](https://img.youtube.com/vi/l2L5o9zz7Os/0.jpg)](https://youtu.be/l2L5o9zz7Os)
+---
 
 ---
 
