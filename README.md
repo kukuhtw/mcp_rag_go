@@ -110,34 +110,6 @@ flowchart TD
 
   %% Optional embeddings at ingest time
   LLM -. embeddings .-> CHUNKS
-
-
-
-```
-
----
-
-## Struktur Proyek
-├── api/
-│   ├── mcp-tools.json
-│   └── openapi.yaml
-├── cmd/
-│   ├── api/         # service HTTP utama
-│   ├── mcp-router/  # router MCP (opsional)
-│   └── worker/      # worker async/batch
-├── internal/
-│   ├── app/         # wiring app.go + routes.go
-│   ├── handlers/
-│   │   ├── http/    # healthz, login, metrics, chat SSE
-│   │   └── mcp/     # implementasi MCP tools
-│   ├── mcp/         # registry, router, plan normalizer
-│   ├── repositories/#
-│   │   ├── mysql/   # akses data domain (PO, drilling, dll)
-│   │   └── search/  # RAG repo
-│   └── ...          # config, middleware, services, util
-├── schemas/         # JSON Schema untuk planner/validasi
-├── db/              # migration & seed MySQL
-└── web/             # FE (React + Vite + Tailwind)
 ```
 
 ---
