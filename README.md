@@ -1,38 +1,50 @@
-# MCP RAG proof of concept — Oil & Gas Prototype
+# MCP RAG Proof of Concept — Oil & Gas Prototype
 
-Proyek ini adalah skeleton aplikasi **Multi Context Protocol (MCP)** untuk industri migas. Aplikasi ini menghubungkan berbagai domain (drilling, production, HSSE, purchase order, timeseries, dan RAG search) ke dalam satu router, sehingga query dari client bisa diarahkan otomatis ke service/repository yang tepat.
+Proyek ini adalah skeleton aplikasi **Multi Context Protocol (MCP)** untuk industri migas.  
+Aplikasi ini menghubungkan berbagai domain (drilling, production, HSSE, purchase order, timeseries, dan RAG search) ke dalam satu router, sehingga query dari client bisa diarahkan otomatis ke service/repository yang tepat.
 
+---
 
-# Apa itu MCP?  
-**Multi Context Protocol (MCP)** adalah protokol untuk menghubungkan LLM dengan berbagai *tools* atau *services* di belakang layar.  
-Dengan MCP, pertanyaan user bisa otomatis dipetakan ke domain tertentu (misalnya drilling events, purchase orders, atau RAG search) lalu dieksekusi dengan cara paling tepat.  
+## Apa itu MCP?
+**Multi Context Protocol (MCP)** adalah protokol untuk menghubungkan LLM dengan berbagai tools atau services di belakang layar.  
+Dengan MCP, pertanyaan user bisa otomatis dipetakan ke domain tertentu (misalnya drilling events, purchase orders, atau RAG search) lalu dieksekusi dengan cara paling tepat.
 
-# Apa itu RAG?  
+## Apa itu RAG?
 **Retrieval-Augmented Generation (RAG)** adalah teknik menggabungkan kemampuan LLM dengan pencarian berbasis dokumen.  
-Alih-alih hanya mengandalkan model, RAG mengambil potongan teks relevan dari database (misalnya `doc_chunks`), lalu menggunakannya untuk menghasilkan jawaban yang lebih akurat dan bersitasi.  
+Alih-alih hanya mengandalkan model, RAG mengambil potongan teks relevan dari database (misalnya `doc_chunks`), lalu menggunakannya untuk menghasilkan jawaban yang lebih akurat dan bersitasi.
 
+---
 
-```
-==============================================================================
+## 📌 Overview Manfaat
+Solusi **MCP + RAG** ini membantu perusahaan migas untuk:  
+- 🔎 **Akses cepat lintas domain**: query user bisa langsung menjangkau data drilling, produksi, HSSE, PO, atau timeseries.  
+- 📚 **Jawaban bersumber dokumen**: hasil yang diberikan memiliki sitasi, memudahkan audit & verifikasi.  
+- ⚡ **Efisiensi kerja**: mengurangi waktu pencarian manual lintas departemen.  
+- 🤖 **Integrasi AI modern**: mendukung LLM (OpenAI) untuk natural query & embeddings.  
+- 🔧 **Fleksibel & extensible**: bisa ditambah tools/domain baru sesuai kebutuhan industri.  
+
+---
+
 Project : MCP_RAG (Oil & Gas) — Go
 Version : 0.1.0
-Author  : Kukuh Tripamungkas Wicaksono (Kukuh TW)
-Email   : kukuhtw@gmail.com
+Author : Kukuh Tripamungkas Wicaksono (Kukuh TW)
+
+Email : kukuhtw@gmail.com
+
 WhatsApp: https://wa.me/628129893706
-LinkedIn: https://id.linkedin.com/in/kukuhtw
+
 License : MIT (see LICENSE)
 
-Summary : Monorepo PoC MCP + RAG untuk studi kasus perusahaan migas.
-          Fitur utama:
-          - MCP Router & Tools (PO, Production, Drilling, Timeseries, NPT).
-          - RAG hybrid (BM25 + cosine) via /rag/search_v2 (MySQL doc_chunks).
-          - Jawaban berbasis dokumen (answer_with_docs) lengkap sitasi.
-          - Chat SSE (/chat/stream): planning → normalize → execute → stream.
-          - Plan normalizer (auto switch rag_search_v2, top-N PO by amount).
-          - Domain REST endpoints siap pakai.
-          - Konfigurasi via ENV; dukung OpenAI untuk LLM/embeddings (opsional).
-==============================================================================
-```
+### Summary
+Monorepo PoC MCP + RAG untuk studi kasus perusahaan migas.  
+Fitur utama:  
+- MCP Router & Tools (PO, Production, Drilling, Timeseries, NPT).  
+- RAG hybrid (BM25 + cosine) via `/rag/search_v2` (MySQL doc_chunks).  
+- Jawaban berbasis dokumen (`answer_with_docs`) lengkap sitasi.  
+- Chat SSE (`/chat/stream`): planning → normalize → execute → stream.  
+- Plan normalizer (auto switch rag_search_v2, top-N PO by amount).  
+- Domain REST endpoints siap pakai.  
+- Konfigurasi via ENV; dukung OpenAI untuk LLM/embeddings (opsional).  
 
 ---
 
