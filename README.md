@@ -89,7 +89,7 @@ flowchart TD
   SSE -->|Plan → Normalize| NORM
 
   NORM -->|Routes (RAG/MCP)| TOOLS
-  NORM -->|RAG routes → /rag/search_v2| RAG_V2
+  NORM -->|RAG routes to /rag/search_v2| RAG_V2
   RAG_V2 --> RAGSRV
   RAGSRV --> CHUNKS
 
@@ -109,6 +109,11 @@ flowchart TD
 
   %% Optional embeddings at ingest time
   LLM -. embeddings .-> CHUNKS
+
+
+
+
+
 ```
 
 ---
