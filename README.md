@@ -1,7 +1,7 @@
 # MCP RAG Proof of Concept — Oil & Gas Prototype
 
-Proyek ini adalah skeleton aplikasi **Multi Context Protocol (MCP)** untuk industri migas.  
-Aplikasi ini menghubungkan berbagai domain (drilling, production, HSSE, purchase order, timeseries, dan RAG search) ke dalam satu router, sehingga query dari client bisa diarahkan otomatis ke service/repository yang tepat.
+Proyek ini adalah Proof of Concept **Multi Context Protocol (MCP) dan Retrieval-Augmented Generation (RAG)** untuk industri migas.  
+Aplikasi ini menghubungkan berbagai sumber internal domain (drilling, production, HSSE, purchase order, timeseries, dan RAG search) ke dalam satu router, sehingga query dari client bisa diarahkan otomatis ke service/repository yang tepat.
 
 ---
 
