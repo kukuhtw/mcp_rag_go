@@ -272,3 +272,31 @@ File compose tersedia di `deployments/compose/`.
     ├── tailwind.config.js
     ├── tsconfig.json
     └── vite.config.ts
+
+berikut sudah aku rapikan jadi satu daftar bernomor:
+
+1. Berapa produksi gas WELL\_A12 pada 2025-09-05?
+2. Bandingkan total nilai PO status delivered antara SLB dan Weatherford pada 2025-09-20 s/d 2025-10-06.
+3. Berikan ringkasan jumlah PO per status terbaru.
+4. Bandingkan total nilai PO antara Halliburton, NOV, dan Weatherford untuk periode 2025-09-01 s/d 2025-10-11.
+5. Emergency Response Plan.
+6. Production Forecast Q4 2025.
+7. Ambil produksi gas WELL\_E05 pada 2025-09-01.
+8. Berapa produksi WELL\_B07 pada September 2025?
+9. Tampilkan produksi gas WELL\_C03 pada 2025-09-04.
+10. Ambil nilai produksi terbaru untuk WELL\_A12.
+11. Tampilkan semua event NPT pada WELL\_B07 selama bulan September 2025.
+12. Apa saja event drilling di WELL\_D02 pada minggu 7–13 September 2025?
+13. Daftar event NPT di WELL\_E05 pada 3 September 2025.
+14. Ambil semua drilling event di WELL\_C03 antara 24–30 September 2025.
+15. Event apa saja yang terjadi di WELL\_F10 pada 10 September 2025?
+16. Tampilkan trend flow rate FLOW\_A12 pada 1 September 2025 selama pukul 00:00–00:23.
+17. Berapa saja nilai flow rate dengan quality=0 pada tag FLOW\_A12 selama 11 September 2025 s/d 12 September 2025?
+18. Bagaimana trend perbandingan rata-rata flow rate per 5 menit di FLOW\_A12 pada awal 1 Sep 2025?
+19. Apakah ada penurunan signifikan flow rate antara 14 Sep 2025 00:05–00:10 dan 14 Sep 2025 00:15–00:20 di FLOW\_A12?
+20. Ambil data oil rate dari OIL\_D01 untuk tanggal 18 Sep 2025 penuh (00:00–23:59).
+21. Tampilkan trend OIL\_B07 pada minggu 15–16 Sep 2025.
+22. Ambil oil rate FLOW\_A12 antara pukul 06:00–12:00 pada 2025-09-01.
+23. Bandingkan flow rate OIL\_D01 dan oil rate OIL\_D02 pada tanggal 18 Sep 2025.
+24. Ambil timeseries untuk semua tag FLOW\_C03, FLOW\_E05, FLOW\_F10 selama 3 Sep 2025, lalu tampilkan rata-rata harian.
+
