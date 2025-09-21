@@ -62,6 +62,8 @@ Email : kukuhtw@gmail.com
 
 WhatsApp: https://wa.me/628129893706
 
+Linkedin: https://www.linkedin.com/in/kukuhtw/
+
 License : MIT (see LICENSE)
 
 ### Summary
