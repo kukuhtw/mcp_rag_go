@@ -2,6 +2,15 @@
 
 Proyek ini adalah skeleton aplikasi **Multi Context Protocol (MCP)** untuk industri migas. Aplikasi ini menghubungkan berbagai domain (drilling, production, HSSE, purchase order, timeseries, dan RAG search) ke dalam satu router, sehingga query dari client bisa diarahkan otomatis ke service/repository yang tepat.
 
+
+# Apa itu MCP?  
+**Multi Context Protocol (MCP)** adalah protokol untuk menghubungkan LLM dengan berbagai *tools* atau *services* di belakang layar.  
+Dengan MCP, pertanyaan user bisa otomatis dipetakan ke domain tertentu (misalnya drilling events, purchase orders, atau RAG search) lalu dieksekusi dengan cara paling tepat.  
+
+# Apa itu RAG?  
+**Retrieval-Augmented Generation (RAG)** adalah teknik menggabungkan kemampuan LLM dengan pencarian berbasis dokumen.  
+Alih-alih hanya mengandalkan model, RAG mengambil potongan teks relevan dari database (misalnya `doc_chunks`), lalu menggunakannya untuk menghasilkan jawaban yang lebih akurat dan bersitasi.  
+==============================================================================  
 ```
 ==============================================================================
 Project : MCP_RAG (Oil & Gas) — Go
