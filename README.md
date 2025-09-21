@@ -1,4 +1,4 @@
-# MCP Multi Context Protocol — Oil & Gas Prototype
+# MCP RAG proof of concept — Oil & Gas Prototype
 
 Proyek ini adalah skeleton aplikasi **Multi Context Protocol (MCP)** untuk industri migas. Aplikasi ini menghubungkan berbagai domain (drilling, production, HSSE, purchase order, timeseries, dan RAG search) ke dalam satu router, sehingga query dari client bisa diarahkan otomatis ke service/repository yang tepat.
 
