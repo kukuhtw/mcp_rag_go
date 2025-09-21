@@ -192,20 +192,17 @@ flowchart TD
 ### 2) Setup DB
 
 ```bash
-cp .env.example .env   # sesuaikan kredensial DB & API key jika perlu
-
-./scripts/migrate.sh   # migrasi schema
-./scripts/seed.sh      # (opsional) muat data contoh
+make build
+make gen-data
+make demo-data
+make ingest-docs
 ```
 
 ### 3) Jalankan Service
 
 ```bash
-# API utama (HTTP)
-make build
-make gen-data
-make demo-data
-make ingest-docs
+# Aminer mysql
+[http://localhost:8080/chat](http://localhost:18080/?)
 ```
 
 ### 4) Jalankan Frontend
