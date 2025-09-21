@@ -40,76 +40,74 @@ Summary : Monorepo PoC MCP + RAG untuk studi kasus perusahaan migas.
 * [Lisensi](#lisensi)
 * [Kredit](#kredit)
 
-```mermaid
 flowchart TD
-    %% LAYER: Client
-    subgraph CLIENT[Client]
-      FE[Web Frontend (React + Vite + Tailwind)\n/web]
-    end
+  %% LAYER: Client
+  subgraph CLIENT["Client"]
+    FE["Web Frontend<br/>React + Vite + Tailwind<br/>(/web)"]
+  end
 
-    %% LAYER: API Service
-    subgraph API[HTTP API Service (cmd/api)]
-      SSE[/GET|POST /chat/stream\nChatSSEHandler/]
-      API_ROUTES[/ /api/* : healthz, metrics,\nlogin, admin, domain mirror /]
-      RAG_V2[/GET|POST /rag/search_v2\nragh.HandlerV2/]
-      MCP_ROUTE[/POST /mcp/route\nmcp.RouterHandler/]
-    end
+  %% LAYER: API Service
+  subgraph API["HTTP API Service (cmd/api)"]
+    SSE["SSE: GET/POST /chat/stream<br/>ChatSSEHandler"]
+    API_ROUTES["API routes: /api/...<br/>healthz, metrics, login, admin, mirror"]
+    RAG_V2["RAG: GET/POST /rag/search_v2<br/>ragh.HandlerV2"]
+    MCP_ROUTE["MCP: POST /mcp/route<br/>mcp.RouterHandler"]
+  end
 
-    %% LAYER: MCP
-    subgraph MCP[MCP Router & Tools]
-      REG[Registry & Router\ninternal/mcp]
-      NORM[Plan Normalizer\nNormalizePlan()]
-      TOOLS{{MCP Tools\ninternal/handlers/mcp\n(get_production, get_timeseries,\nget_drilling_events, get_po_status,\nget_po_vendor_compare, get_po_vendor_summary,\nsummarize_npt_events, get_po_top_amount,\nanswer_with_docs)}}
-    end
+  %% LAYER: MCP
+  subgraph MCP["MCP Router & Tools"]
+    REG["Registry & Router<br/>internal/mcp"]
+    NORM["Plan Normalizer<br/>NormalizePlan()"]
+    TOOLS["MCP Tools<br/>(get_production, get_timeseries,<br/>get_drilling_events, get_po_status,<br/>get_po_vendor_compare, get_po_vendor_summary,<br/>summarize_npt_events, get_po_top_amount,<br/>answer_with_docs)"]
+  end
 
-    %% LAYER: RAG
-    subgraph RAG[RAG Hybrid]
-      RAGSRV[ragh.HandlerV2\n(BM25 + Cosine)]
-      ANSWER_DOCS[answer_with_docs\n(sitasi dari retrieved_chunks)]
-    end
+  %% LAYER: RAG
+  subgraph RAG["RAG Hybrid"]
+    RAGSRV["ragh.HandlerV2<br/>(BM25 + cosine)"]
+    ANSWER_DOCS["answer_with_docs<br/>(citations from retrieved_chunks)"]
+  end
 
-    %% LAYER: Data Stores
-    subgraph DB[(MySQL)]
-      CHUNKS[(doc_chunks\n+ embedding JSON)]
-      DOMAINS[(production, timeseries,\ndrilling_events, purchase_orders,\nwork_orders, ...)]
-    end
+  %% LAYER: Data Stores
+  subgraph DB["MySQL"]
+    CHUNKS["doc_chunks + embedding JSON"]
+    DOMAINS["production, timeseries,<br/>drilling_events, purchase_orders,<br/>work_orders, ..."]
+  end
 
-    %% LAYER: Optional LLM/Obs
-    subgraph EXT[Optional Services]
-      LLM[(OpenAI LLM/Embeddings)]
-      PROM[(Prometheus/Grafana)]
-    end
+  %% LAYER: Optional LLM/Obs
+  subgraph EXT["Optional Services"]
+    LLM["OpenAI LLM & embeddings"]
+    PROM["Prometheus & Grafana"]
+  end
 
-    %% FLOWS
-    FE -->|SSE| SSE
-    FE -->|REST| API_ROUTES
+  %% FLOWS
+  FE -->|SSE| SSE
+  FE -->|REST| API_ROUTES
 
-    SSE -->|Load tool schemas| REG
-    REG --> NORM
-    SSE -->|Plan → Normalize| NORM
+  SSE -->|Load tool schemas| REG
+  REG --> NORM
+  SSE -->|Plan → Normalize| NORM
 
-    NORM -->|Routes (RAG/MCP)| TOOLS
-    NORM -->|RAG routes → /rag/search_v2| RAG_V2
-    RAG_V2 --> RAGSRV
-    RAGSRV --> CHUNKS
+  NORM -->|Routes (RAG/MCP)| TOOLS
+  NORM -->|RAG routes → /rag/search_v2| RAG_V2
+  RAG_V2 --> RAGSRV
+  RAGSRV --> CHUNKS
 
-    TOOLS -->|Domain queries| DOMAINS
-    TOOLS -->|Jawab dg dokumen| ANSWER_DOCS
-    ANSWER_DOCS --> CHUNKS
+  TOOLS -->|Domain queries| DOMAINS
+  TOOLS -->|Answer w/ documents| ANSWER_DOCS
+  ANSWER_DOCS --> CHUNKS
 
-    SSE -->|Synthesizer stream| LLM
-    LLM --> SSE
-    SSE -->|SSE events: plan, sources, delta, done| FE
+  SSE -->|Synthesizer stream| LLM
+  LLM --> SSE
+  SSE -->|SSE events: plan, sources, delta, done| FE
 
-    API_ROUTES --> PROM
-    SSE --> PROM
-    MCP_ROUTE --> REG
-    REG --> TOOLS
-    TOOLS --> DOMAINS
+  API_ROUTES --> PROM
+  SSE --> PROM
+  MCP_ROUTE --> REG
+  REG --> TOOLS
+  TOOLS --> DOMAINS
 
-    %% Optional embeddings at ingest time
-    LLM -. embeddings .-> CHUNKS
-```
+  %% Optional embeddings at ingest time
+  LLM -. embeddings .-> CHUNKS
 
 
 ## Struktur Proyek
