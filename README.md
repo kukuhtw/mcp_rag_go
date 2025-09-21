@@ -150,13 +150,10 @@ cp .env.example .env   # sesuaikan kredensial DB & API key jika perlu
 
 ```bash
 # API utama (HTTP)
-go run ./cmd/api
-
-# MCP Router (opsional)
-go run ./cmd/mcp-router
-
-# Worker (opsional)
-go run ./cmd/worker
+make build
+make gen-data
+make demo-data
+make ingest-docs
 ```
 
 ### 4) Jalankan Frontend
