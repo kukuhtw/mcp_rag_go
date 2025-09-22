@@ -74,7 +74,7 @@ Fitur utama:
 - Jawaban berbasis dokumen (`answer_with_docs`) lengkap sitasi.  
 - Chat SSE (`/chat/stream`): planning → normalize → execute → stream.  
 - Plan normalizer (auto switch rag_search_v2, top-N PO by amount).  
-- Domain REST endpoints siap pakai.  
+- REST endpoints siap pakai.  
 - Konfigurasi via ENV; dukung OpenAI untuk LLM/embeddings (opsional).  
 
 ---
