@@ -56,27 +56,23 @@ The **MCP + RAG** project offers a modern approach:
 * 🧩 **More flexible** → easy to extend with additional tools/domains.
 
 ---
-
 ---
-
-## [![Demo Video](https://img.youtube.com/vi/l2L5o9zz7Os/0.jpg)](https://youtu.be/l2L5o9zz7Os)
-
+[![Demo Video](https://img.youtube.com/vi/l2L5o9zz7Os/0.jpg)](https://youtu.be/l2L5o9zz7Os)
 ---
 
 ---
 
-Project : MCP\_RAG (Oil & Gas) — Go
+Project : MCP_RAG (Oil & Gas) — Go
 Version : 0.1.0
 Author : Kukuh Tripamungkas Wicaksono (Kukuh TW)
 
-Email : [kukuhtw@gmail.com](mailto:kukuhtw@gmail.com)
-WhatsApp : [https://wa.me/628129893706](https://wa.me/628129893706)
-LinkedIn : [https://www.linkedin.com/in/kukuhtw/](https://www.linkedin.com/in/kukuhtw/)
+Email : kukuhtw@gmail.com
+
+WhatsApp: https://wa.me/628129893706
+
+Linkedin: https://www.linkedin.com/in/kukuhtw/
 
 License : MIT (see LICENSE)
-
----
-
 ### Summary
 
 Monorepo PoC for MCP + RAG in an oil & gas case study.
