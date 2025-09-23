@@ -1,6 +1,4 @@
-Here’s your full README-style document translated into English:
 
----
 
 # MCP RAG Proof of Concept — Oil & Gas Prototype
 
@@ -197,6 +195,3 @@ MIT — see `LICENSE`.
 
 Developed by **Kukuh Tripamungkas Wicaksono (Kukuh TW)** as a PoC architecture for MCP + RAG in the oil & gas domain.
 
----
-
-Would you like me to also **restructure this into a polished GitHub `README.md` template** (with badges, table of contents links, and setup steps) so you can push it directly to your repo?
