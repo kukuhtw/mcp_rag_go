@@ -87,7 +87,79 @@ Key features:
 * Configurable via ENV; optional OpenAI integration for LLM/embeddings.
 
 ---
+```mermaid
 
+flowchart TD
+  %% LAYER: Client
+  subgraph CLIENT["Client"]
+    FE["Web Frontend<br/>React + Vite + Tailwind<br/>(/web)"]
+  end
+
+  %% LAYER: API Service
+  subgraph API["HTTP API Service (cmd/api)"]
+    SSE["SSE: GET/POST /chat/stream<br/>ChatSSEHandler"]
+    API_ROUTES["API routes: /api/...<br/>healthz, metrics, login, admin, mirror"]
+    RAG_V2["RAG: GET/POST /rag/search_v2<br/>ragh.HandlerV2"]
+    MCP_ROUTE["MCP: POST /mcp/route<br/>mcp.RouterHandler"]
+  end
+
+  %% LAYER: MCP
+  subgraph MCP["MCP Router & Tools"]
+    REG["Registry & Router<br/>internal/mcp"]
+    NORM["Plan Normalizer<br/>NormalizePlan()"]
+    TOOLS["MCP Tools<br/>(get_production, get_timeseries,<br/>get_drilling_events, get_po_status,<br/>get_po_vendor_compare, get_po_vendor_summary,<br/>summarize_npt_events, get_po_top_amount,<br/>answer_with_docs)"]
+  end
+
+  %% LAYER: RAG
+  subgraph RAG["RAG Hybrid"]
+    RAGSRV["ragh.HandlerV2<br/>(BM25 + cosine)"]
+    ANSWER_DOCS["answer_with_docs<br/>(citations from retrieved_chunks)"]
+  end
+
+  %% LAYER: Data Stores
+  subgraph DB["MySQL"]
+    CHUNKS["doc_chunks + embedding JSON"]
+    DOMAINS["production, timeseries,<br/>drilling_events, purchase_orders,<br/>work_orders, ..."]
+  end
+
+  %% LAYER: Optional LLM/Obs
+  subgraph EXT["Optional Services"]
+    LLM["OpenAI LLM & embeddings"]
+    PROM["Prometheus & Grafana"]
+  end
+
+  %% FLOWS
+  FE -->|SSE| SSE
+  FE -->|REST| API_ROUTES
+
+  SSE -->|Load tool schemas| REG
+  REG --> NORM
+  SSE -->|Plan → Normalize| NORM
+
+  NORM -->|Routes RAG MCP | TOOLS
+  NORM -->|RAG routes to /rag/search_v2| RAG_V2
+  RAG_V2 --> RAGSRV
+  RAGSRV --> CHUNKS
+
+  TOOLS -->|Domain queries| DOMAINS
+  TOOLS -->|Answer w/ documents| ANSWER_DOCS
+  ANSWER_DOCS --> CHUNKS
+
+  SSE -->|Synthesizer stream| LLM
+  LLM --> SSE
+  SSE -->|SSE events: plan, sources, delta, done| FE
+
+  API_ROUTES --> PROM
+  SSE --> PROM
+  MCP_ROUTE --> REG
+  REG --> TOOLS
+  TOOLS --> DOMAINS
+
+  %% Optional embeddings at ingest time
+  LLM -. embeddings .-> CHUNKS
+```
+
+---
 ## Table of Contents
 
 * [Key Features](#key-features)
