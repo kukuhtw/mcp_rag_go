@@ -1,23 +1,25 @@
 // web/src/components/Layout.tsx
-import { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
-import Sidebar from './Sidebar'
+import { Link, Outlet, useLocation } from "react-router-dom";
 
-export default function Layout({ children }: { children: ReactNode }) {
+export default function Layout() {
+  const loc = useLocation();
+  const isActive = (p: string) =>
+    loc.pathname === p ? "text-slate-900 font-semibold" : "text-slate-600";
+
   return (
-    <div className="min-h-screen">
-      <nav className="sticky top-0 bg-white border-b z-10">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Link to="/" className="text-xl font-semibold">MCP Oil & Gas</Link>
-          <div className="ml-auto text-sm text-slate-500">
-            API: {import.meta.env.VITE_API_BASE || 'http://localhost:8080'}
-          </div>
+    <div className="min-h-screen bg-slate-50">
+      <header className="border-b bg-white">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="font-bold">MCP+RAG Chat Demo</div>
+          <nav className="flex gap-4 text-sm">
+            <Link className={isActive("/chat")} to="/chat">Chat</Link>
+          </nav>
         </div>
-      </nav>
-      <div className="max-w-6xl mx-auto px-4 flex">
-        <Sidebar />
-        <main className="flex-1 py-6 pl-6">{children}</main>
-      </div>
+      </header>
+
+      <main className="max-w-4xl mx-auto px-4 py-6">
+        <Outlet />
+      </main>
     </div>
-  )
+  );
 }

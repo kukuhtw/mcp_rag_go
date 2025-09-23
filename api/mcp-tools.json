@@ -2,17 +2,63 @@
   "tools": [
     {
       "name": "get_timeseries",
-      "description": "Fetch timeseries data for a tag_id",
-      "input_schema": {
-        "type": "object",
-        "properties": {
-          "tag_id": { "type": "string" },
-          "start": { "type": "string", "format": "date-time" },
-          "end": { "type": "string", "format": "date-time" },
-          "limit": { "type": "integer", "minimum": 1, "maximum": 5000 }
-        },
-        "required": ["tag_id"]
-      }
+      "description": "Ambil data time-series (mis. produksi, tekanan) dalam rentang waktu tertentu, kembalikan poin data untuk digrafikkan.",
+      "input_schema": "schemas/mcp/tool_get_timeseries.schema.json"
+    },
+    {
+      "name": "answer_with_docs",
+      "description": "Jawab pertanyaan berbasis dokumen (RAG). Gunakan pencarian dokumen untuk menemukan potongan (snippets) yang relevan.",
+      "input_schema": "schemas/mcp/tool_answer_with_docs.schema.json"
+    },
+    {
+      "name": "get_drilling_events",
+      "description": "Ambil daftar event drilling (termasuk NPT) dengan filter sumur/periodenya.",
+      "input_schema": "schemas/mcp/tool_get_drilling_events.schema.json"
+    },
+    {
+      "name": "search_work_orders",
+      "description": "Cari work order berdasarkan asset/area/status/due date.",
+      "input_schema": "schemas/mcp/tool_search_work_orders.schema.json"
+    },
+    {
+      "name": "detect_anomalies_and_correlate",
+      "description": "Deteksi anomali sederhana dan korelasi antar series menggunakan z-score & korelasi Pearson.",
+      "input_schema": "schemas/mcp/tool_detect_anomalies.schema.json"
+    },
+    {
+      "name": "get_po_vendor_compare",
+      "description": "Komparasi total nilai PO antar vendor pada rentang tanggal.",
+      "input_schema": "schemas/mcp/tool_get_po_vendor_compare.schema.json"
+    },
+    {
+      "name": "get_po_vendor_summary",
+      "description": "Ambil daftar vendor dengan jumlah PO terbanyak dan total nilai untuk status tertentu.",
+      "input_schema": "schemas/mcp/tool_get_po_vendor_summary.schema.json"
+    },
+    {
+      "name": "get_po_by_number",
+      "description": "Detail 1 PO berdasarkan nomornya.",
+      "input_schema": "schemas/mcp/tool_get_po_by_number.schema.json"
+    },
+    {
+      "name": "get_po_top_amount",
+      "description": "Ambil N Purchase Order dengan nilai (amount) tertinggi. Bisa difilter status/vendor/rentang hari (updated_at).",
+      "input_schema": "schemas/mcp/tool_get_po_top_amount.schema.json"
+    },
+    {
+      "name": "get_po_status",
+      "description": "Informasi PO: hitung per status (mode=status_summary atau status=...), atau komparasi nilai per vendor (mode=vendor_compare).",
+      "input_schema": "schemas/mcp/tool_get_po_status.schema.json"
+    },
+    {
+      "name": "get_production",
+      "description": "Ambil ringkasan produksi harian/mingguan/bulanan per sumur/field.",
+      "input_schema": "schemas/mcp/tool_get_production.schema.json"
+    },
+    {
+      "name": "summarize_npt_events",
+      "description": "Ringkas NPT events beserta akar penyebabnya dari rentang tanggal tertentu.",
+      "input_schema": "schemas/mcp/tool_summarize_npt.schema.json"
     }
   ]
 }

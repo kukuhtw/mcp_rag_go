@@ -2,7 +2,7 @@
 package http
 
 import (
-	"bytes"            // ← tambah in
+	"bytes" // ← untuk hybrid RAG call
 	"context"
 	"encoding/json"
 	"fmt"
@@ -58,6 +58,46 @@ func sseEvent(w http.ResponseWriter, flusher http.Flusher, event string, v any) 
 	flusher.Flush()
 }
 
+// Heuristik ringan untuk mendeteksi bahasa Inggris
+func looksEnglish(s string) bool {
+	ls := strings.ToLower(s)
+	enHint := []string{
+		"the", "and", "of", "for", "what", "how", "why", "please", "show",
+		"compare", "top", "amount", "vendor", "status", "drilling", "timeseries",
+	}
+	for _, w := range enHint {
+		if strings.Contains(ls, w) {
+			return true
+		}
+	}
+	// fallback berdasarkan rasio huruf latin
+	letters := 0
+	for _, r := range s {
+		if (r >= 'A' && r <= 'Z') || (r >= 'a' && r <= 'z') {
+			letters++
+		}
+	}
+	return letters >= int(float64(len(s))*0.35)
+}
+
+func systemPromptByLang(lang string) string {
+	if lang == "en" {
+		return `You are a technical assistant.
+- Use the "sources" data to answer the question.
+- Be concise and accurate; call out key numbers and conclusions.
+- If data is insufficient, state the limitation.
+- Write in natural English for the user.
+- If time series or tabular data is present, the client UI will render charts/tables in a separate section; you don't need to reformat them.`
+	}
+	// default: Indonesian
+	return `Anda adalah asisten teknis.
+- Gunakan data pada "sources" untuk menjawab pertanyaan.
+- Tulis ringkas, akurat, sebutkan angka/kesimpulan penting.
+- Jika data kurang, sebutkan keterbatasannya.
+- Balas dengan bahasa Indonesia yang alami.
+- Jika ada time series atau tabel, UI klien akan menampilkan chart/tabel di panel terpisah; Anda tidak perlu memformat ulang.`
+}
+
 // ----------------- Handler -----------------
 
 // ChatSSEHandler: Orkestrasi (Planner LLM → Eksekusi Routes MCP/RAG → Synth LLM Streaming).
@@ -74,10 +114,10 @@ func ChatSSEHandler(w http.ResponseWriter, r *http.Request) {
 		"time":  time.Now().Format(time.RFC3339),
 	})
 
-	// 1) Ambil pertanyaan
+	// 1) Ambil pertanyaan (GET q=... atau POST {question,...})
+	var body sseAskRequest
 	q := strings.TrimSpace(r.URL.Query().Get("q"))
 	if q == "" && r.Method == http.MethodPost {
-		var body sseAskRequest
 		_ = json.NewDecoder(r.Body).Decode(&body)
 		q = strings.TrimSpace(body.Question)
 	}
@@ -85,6 +125,23 @@ func ChatSSEHandler(w http.ResponseWriter, r *http.Request) {
 		sseEvent(w, flusher, "error", `{"message":"question required"}`)
 		return
 	}
+
+	// --- NEW: tentukan language ---
+	lang := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("lang")))
+	if lang == "" && body.Params != nil {
+		if v, ok := body.Params["lang"].(string); ok {
+			lang = strings.ToLower(strings.TrimSpace(v))
+		}
+	}
+	if lang != "en" && lang != "id" {
+		// heuristik ringan
+		if looksEnglish(q) {
+			lang = "en"
+		} else {
+			lang = "id"
+		}
+	}
+	sseEvent(w, flusher, "meta", map[string]string{"lang": lang})
 
 	// 2) Init LLM + Planner
 	client, err := llm.NewFromEnv()
@@ -173,9 +230,7 @@ func ChatSSEHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-	} else {
-		// planner nil → sudah dikirim warn di atas
-	}
+	} // planner nil → sudah dikirim warn di atas
 
 	plan = mcps.NormalizePlan(ctx, q, plan)
 	// Expose rencana ke FE
@@ -183,77 +238,76 @@ func ChatSSEHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 4) Eksekusi Routes
 	sseEvent(w, flusher, "phase", `"exec_start"`)
+
 	ragFn := func(ctx context.Context, query string, topK int) ([]map[string]any, error) {
-    // 1) Coba pakai hybrid endpoint /rag/search_v2 (BM25+cosine) – tidak butuh OpenAI di query-time
-    payload := map[string]any{
-        "query": query,
-        "top_k": topK,
-        "alpha": 0.6,
-    }
-    b, _ := json.Marshal(payload)
+		// 1) Coba pakai hybrid endpoint /rag/search_v2 (BM25+cosine) – tidak butuh OpenAI di query-time
+		payload := map[string]any{
+			"query": query,
+			"top_k": topK,
+			"alpha": 0.6,
+		}
+		b, _ := json.Marshal(payload)
 
-    req, _ := http.NewRequestWithContext(ctx, http.MethodPost, "http://localhost:8080/rag/search_v2", bytes.NewReader(b))
-    req.Header.Set("Content-Type", "application/json")
+		req, _ := http.NewRequestWithContext(ctx, http.MethodPost, "http://localhost:8080/rag/search_v2", bytes.NewReader(b))
+		req.Header.Set("Content-Type", "application/json")
 
-    if resp, err := http.DefaultClient.Do(req); err == nil && resp.StatusCode >= 200 && resp.StatusCode < 300 {
-        defer resp.Body.Close()
-        var r struct {
-            RetrievedChunks []struct {
-                DocID   string `json:"doc_id"`
-                Title   string `json:"title"`
-                URL     string `json:"url"`
-                Snippet string `json:"snippet"`
-                PageNo  int    `json:"page_no"`
-                Score   any    `json:"score"`
-            } `json:"retrieved_chunks"`
-        }
-        if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
-            return nil, fmt.Errorf("decode rag response: %w", err)
-        }
-        out := make([]map[string]any, 0, len(r.RetrievedChunks))
-        for _, h := range r.RetrievedChunks {
-            out = append(out, map[string]any{
-                "doc_id":  h.DocID,
-                "title":   h.Title,
-                "url":     h.URL,
-                "snippet": h.Snippet,
-                "page_no": h.PageNo, // ← penting: page_no (bukan "page")
-                "score":   h.Score,
-            })
-        }
-        return out, nil
-    }
-// 2) Fallback: kalau hybrid gagal, coba repo embeddings (kalau ada)
-    if ragRepo == nil {
-        return nil, fmt.Errorf("RAG hybrid & embeddings repo unavailable")
-    }
-    hits, err := ragRepo.Retrieve(ctx, query, topK)
-    if err != nil {
-        return nil, err
-    }
-    out := make([]map[string]any, 0, len(hits))
-    for _, h := range hits {
-        out = append(out, map[string]any{
-            "doc_id":  h.DocID,
-            "title":   h.Title,
-            "url":     h.URL,
-            "snippet": h.Snippet,
-            "page_no": h.Page, // konsistenkan ke page_no
-            "score":   h.Score,
-        })
-    }
-    return out, nil
-}
+		if resp, err := http.DefaultClient.Do(req); err == nil && resp.StatusCode >= 200 && resp.StatusCode < 300 {
+			defer resp.Body.Close()
+			var r struct {
+				RetrievedChunks []struct {
+					DocID   string `json:"doc_id"`
+					Title   string `json:"title"`
+					URL     string `json:"url"`
+					Snippet string `json:"snippet"`
+					PageNo  int    `json:"page_no"`
+					Score   any    `json:"score"`
+				} `json:"retrieved_chunks"`
+			}
+			if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
+				return nil, fmt.Errorf("decode rag response: %w", err)
+			}
+			out := make([]map[string]any, 0, len(r.RetrievedChunks))
+			for _, h := range r.RetrievedChunks {
+				out = append(out, map[string]any{
+					"doc_id":  h.DocID,
+					"title":   h.Title,
+					"url":     h.URL,
+					"snippet": h.Snippet,
+					"page_no": h.PageNo, // ← penting: page_no (bukan "page")
+					"score":   h.Score,
+				})
+			}
+			return out, nil
+		}
+
+		// 2) Fallback: kalau hybrid gagal, coba repo embeddings (kalau ada)
+		if ragRepo == nil {
+			return nil, fmt.Errorf("RAG hybrid & embeddings repo unavailable")
+		}
+		hits, err := ragRepo.Retrieve(ctx, query, topK)
+		if err != nil {
+			return nil, err
+		}
+		out := make([]map[string]any, 0, len(hits))
+		for _, h := range hits {
+			out = append(out, map[string]any{
+				"doc_id":  h.DocID,
+				"title":   h.Title,
+				"url":     h.URL,
+				"snippet": h.Snippet,
+				"page_no": h.Page, // konsistenkan ke page_no
+				"score":   h.Score,
+			})
+		}
+		return out, nil
+	}
+
 	sources, _ := mcps.ExecuteRoutes(ctx, plan.Routes, ragFn)
 	sseEvent(w, flusher, "sources", sources)
 	sseEvent(w, flusher, "phase", `"exec_done"`)
 
 	// 5) Synthesizer (Streaming)
-	sys := `Anda adalah asisten teknis.
-- Gunakan data pada "sources" untuk menjawab pertanyaan.
-- Tulis ringkas, akurat, sebutkan angka/kesimpulan penting.
-- Jika data kurang, sebutkan keterbatasannya.
-- Balas dengan bahasa alami untuk user.`
+	sys := systemPromptByLang(lang)
 
 	payload := struct {
 		Question string            `json:"question"`

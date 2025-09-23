@@ -6,8 +6,23 @@ WORKDIR /app
 # Salin file dependency dulu (agar cache build maksimal)
 COPY web/package*.json ./web/
 WORKDIR /app/web
-# Kalau ada package-lock.json → npm ci; kalau tidak → npm install
-RUN [ -f package-lock.json ] && npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+
+# Install deps dari lockfile jika ada; fallback ke npm install
+RUN if [ -f package-lock.json ]; then \
+      npm ci --no-audit --no-fund; \
+    else \
+      npm install --no-audit --no-fund; \
+    fi
+
+# Pastikan recharts terpasang (idempotent)
+# - Jika belum tercantum di package.json → install & tulis ke package.json/package-lock.json
+# - Jika sudah ada → lewati
+RUN if ! grep -q '"recharts"' package.json; then \
+      echo "Installing recharts..."; \
+      npm install recharts --save --no-audit --no-fund; \
+    else \
+      echo "recharts already present in package.json"; \
+    fi
 
 # Salin source & build
 COPY web/ /app/web/
@@ -17,8 +32,11 @@ RUN npm run build
 
 # ---------- Runtime stage ----------
 FROM nginx:1.27-alpine AS webruntime
+
 # Copy build output to nginx html
 COPY --from=webbuilder /app/web/dist/ /usr/share/nginx/html
+
 # Basic nginx config (SPA history fallback)
 RUN printf 'server {\n  listen 80;\n  server_name _;\n  root /usr/share/nginx/html;\n  location / {\n    try_files $uri /index.html;\n  }\n}\n' > /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
