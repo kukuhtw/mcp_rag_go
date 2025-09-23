@@ -59,6 +59,7 @@ The **MCP + RAG** project offers a modern approach:
 ---
 [![Demo Video](https://img.youtube.com/vi/l2L5o9zz7Os/0.jpg)](https://youtu.be/l2L5o9zz7Os)
 ---
+https://youtu.be/VNu7gytZr0E
 
 ---
 
