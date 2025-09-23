@@ -245,7 +245,7 @@ http://localhost:8080/chat
 19. Was there a significant drop in flow rate between September 14, 2025, 00:05–00:10 vs 00:15–00:20 in FLOW_A12?
 20. Retrieve the oil rate OIL_D01 for September 18, 2025 (full day 00:00–23:59).
 21. Show the OIL_B07 trend during September 15–16, 2025.
-22. Retrieve the oil rate FLOW_A12 between 06:00–12:00 on 2025-09-01.
+22. Retrieve the oil rate FLOW_A12 ,  FLOW_E05 between 06:00–12:00 on 2025-09-01.
 23. Compare the flow rates OIL_D01 vs OIL_D02 on September 18, 2025.
 24. Retrieve the timeseries for FLOW_C03, FLOW_E05, and FLOW_F10 during September 3, 2025, then show the daily average.
 
