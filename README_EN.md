@@ -224,18 +224,48 @@ http://localhost:8080/chat
 
 ## Example Questions
 
-1. What was the production of `WELL_A12` on `2025-09-05`?
-2. Compare total PO value with **status delivered** between **SLB** and **Weatherford** from `2025-09-20` to `2025-10-06`.
+1. What was the production of WELL_A12 on 2025-09-05?
+2. Compare total PO value with status delivered between SLB and Weatherford from 2025-09-20 to 2025-10-06.
 3. Summarize PO count by latest status.
-4. Compare PO values for **Halliburton**, **NOV**, and **Weatherford** between `2025-09-01` and `2025-10-11`.
-5. *Emergency Response Plan*.
-6. *Production Forecast Q4 2025*.
-7. Retrieve gas production of `WELL_E05` on `2025-09-01`.
-8. What was `WELL_B07` production in September 2025?
-9. Show gas production of `WELL_C03` on `2025-09-04`.
-10. Get the latest production value for `WELL_A12`.
-11. List all **NPT events** on `WELL_B07` during September 2025.
-    … (and more as in the original list).
+4. Compare PO values for Halliburton, NOV, and Weatherford between 2025-09-01 and 2025-10-11.
+. Retrieve the Emergency Response Plan.
+ the Production Forecast Q4 2025.
+
+7. Retrieve gas production of WELL_E05 on 2025-09-01.
+
+8. What was WELL_B07 production in September 2025?
+
+9. Show gas production of WELL_C03 on 2025-09-04.
+
+10. Get the latest production value for WELL_A12.
+
+11. List all NPT events on WELL_B07 during September 2025.
+
+12. What drilling events occurred in WELL_D02 during the week of September 7–13, 2025?
+
+13. List the NPT events in WELL_E05 on September 3, 2025.
+
+14. Retrieve all drilling events in WELL_C03 between September 24–30, 2025.
+
+15. What events occurred in WELL_F10 on September 10, 2025?
+
+16. Show the flow rate trend for FLOW_A12 on September 1, 2025, from 00:00–00:23.
+
+17. What are the flow rate values with quality=0 in FLOW_A12 during September 11–12, 2025?
+
+18. Show the 5-minute average comparison trend in FLOW_A12 at the beginning of September 1, 2025.
+
+19. Was there a significant drop in flow rate between September 14, 2025, 00:05–00:10 vs 00:15–00:20 in FLOW_A12?
+
+20. Retrieve the oil rate OIL_D01 for September 18, 2025 (full day 00:00–23:59).
+
+21. Show the OIL_B07 trend during September 15–16, 2025.
+
+22. Retrieve the oil rate FLOW_A12 between 06:00–12:00 on 2025-09-01.
+
+23. Compare the flow rates OIL_D01 vs OIL_D02 on September 18, 2025.
+
+24. Retrieve the timeseries for FLOW_C03, FLOW_E05, and FLOW_F10 during September 3, 2025, then show the daily average.
 
 ---
 
