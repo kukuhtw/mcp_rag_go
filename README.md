@@ -48,8 +48,10 @@ Proyek **MCP + RAG** ini menawarkan pendekatan modern:
 - 🧩 **Lebih fleksibel** → mudah diperluas dengan tools/domain tambahan sesuai kebutuhan bisnis.  
 .  
 ---
----
 [![Demo Video](https://img.youtube.com/vi/l2L5o9zz7Os/0.jpg)](https://youtu.be/l2L5o9zz7Os)
+---
+---
+[![Demo Video](https://img.youtube.com/vi/VNu7gytZr0E/0.jpg)](https://youtu.be/VNu7gytZr0E)
 ---
 
 ---
