@@ -73,6 +73,8 @@ LinkedIn : [https://www.linkedin.com/in/kukuhtw/](https://www.linkedin.com/in/ku
 
 License : MIT (see LICENSE)
 
+---
+
 ### Summary
 
 Monorepo PoC for MCP + RAG in an oil & gas case study.
